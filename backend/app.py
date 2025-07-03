@@ -38,7 +38,45 @@ def fetchUser(username):
     
   else:
       return jsonify({'error': "User not found"}), 404
+    
+@app.route('/user/<username>', methods=['PUT'])
+def updateUser(username):
   
+  data = request.get_json()
+  email = data.get('email')
+  password = data.get('password')
+  
+  cursor = db.cursor()
+  cursor.execute("SELECT username FROM users WHERE username = %s", (username,))
+  
+  result = cursor.fetchone()
+  
+  if result:
+    try:  
+      if email and password:
+        
+        cursor.execute("UPDATE users SET email = %s, password = %s WHERE username = %s", (email, password, username))
+        db.commit()
+        return jsonify({'message': 'Updated email and password successfully'}), 200
+      
+      elif email:
+        
+        cursor.execute("UPDATE users SET email = %s WHERE username = %s", (email, username))
+        db.commit()
+        return jsonify({'message': 'Updated email successfully'}), 200
+        
+      elif password:
+        
+        cursor.execute("UPDATE users SET password = %s WHERE username = %s", (password, username))
+        db.commit()
+        return jsonify({'message': 'Updated password successfully'}), 200
+    
+    except Error as e:
+      return jsonify({'error': str(e)}), 400
+    
+  else:
+    return jsonify({'error': 'No such user exists'}), 404
+    
   
   
   
