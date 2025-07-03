@@ -24,6 +24,24 @@ def signup():
   
   except Error as e:
     return jsonify({'error':str(e)}), 400
+  
+@app.route('/user/<username>' ,methods=['GET'])
+def fetchUser(username):
+  
+  cursor = db.cursor()
+  cursor.execute("SELECT username, email, created_at from users where username = %s", (username,))
+
+  result = cursor.fetchone()
+  if result:
+    username, email, created_at = result
+    return jsonify({'username': username, 'email': email, 'created_at': str(created_at)}), 200
+    
+  else:
+      return jsonify({'error': "User not found"}), 404
+  
+  
+  
+  
 
 if __name__ == '__main__':
   app.run(debug=True)
