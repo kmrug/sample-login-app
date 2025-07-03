@@ -76,9 +76,23 @@ def updateUser(username):
     
   else:
     return jsonify({'error': 'No such user exists'}), 404
+  
+@app.route('/user/<username>', methods=['DELETE'])
+def deleteUser(username):
+  
+  cursor = db.cursor()
+  cursor.execute("SELECT username FROM users WHERE username = %s", (username,))  
+  
+  result = cursor.fetchone()
+  
+  if result:
     
-  
-  
+    cursor.execute("DELETE FROM users WHERE username = %s", (username,))
+    db.commit()
+    return jsonify({'message': 'Sucessfully deleted ' + username}), 200
+    
+  else:
+    return jsonify({'error': 'No such user found'}), 404  
   
 
 if __name__ == '__main__':
