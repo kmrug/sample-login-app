@@ -41,6 +41,38 @@ def fetchUser(username):
   else:
       return jsonify({'error': "User not found"}), 404
     
+@app.route('/login', methods=["POST"])
+def login():
+  data = request.get_json()
+  email = data.get('email')
+  password = data.get('password')
+  
+  print(request.data)
+  print(request.get_json())
+  print(type(email))
+  print(email)
+  
+  try:
+    cursor = db.cursor()
+    cursor.execute("SELECT password from users where email = %s", (email,))
+    
+    result = cursor.fetchone()
+    cursor.close()
+    
+    if (result):
+      passwordFetched = result[0]
+      if (passwordFetched == password):
+        return jsonify({'message': 'Logged in successfully'}), 201
+    
+      else:
+        return jsonify({'message': 'Incorrect credentials'}), 404
+      
+    else:      
+      return jsonify({'message': 'Incorrect credentials'}), 404
+  
+  except Error as e:
+    return jsonify({'error':str(e)}), 400
+    
 @app.route('/user/<username>', methods=['PUT'])
 def updateUser(username):
   
