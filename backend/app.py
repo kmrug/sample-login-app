@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from mysql.connector import Error
 from config import db
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
