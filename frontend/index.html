@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Login/Signup App</title>
+</head>
+
+<body>
+
+  <form id="signupForm" action="/signup" method="post">
+    <h2>Sign Up</h2>
+    <label for="signupName">Name:</label><br>
+    <input type="text" id="signupName" name="signupName" required><br>
+    <br>
+    <label for="signupEmail">Email:</label><br>
+    <input type="email" id="signupEmail" name="signupEmail" required><br>
+    <br>
+    <label for="signupPassword">Password:</label><br>
+    <input type="password" id="signupPassword" name="signupPassword" required><br>
+    <br>
+    <button type="submit">Sign Up</button>
+    <br>
+    <div id="responseMsg" style="margin-top: 10px; font-weight: bold;"></div>
+
+  </form>
+
+  <script>
+    const signupForm = document.getElementById("signupForm");
+
+    signupForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const username = document.getElementById("signupName").value;
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+
+      const payload = {
+        username: username,
+        email: email,
+        password: password
+      }
+
+      try {
+        const response = fetch("http://localhost:5000/signup", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }).then(response => response.json()).then(data => {
+          const msgDiv = document.getElementById("responseMsg");
+
+          if (data.message) {
+            msgDiv.textContent = data.message;
+            msgDiv.style.color = "green";
+          } else if (data.error) {
+            msgDiv.textContent = data.error;
+            msgDiv.style.color = "red";
+          }
+        })
+      } catch (error) {
+        console.error('Error submitting data:', error);
+      }
+    })
+  </script>
+</body>
+
+</html>
