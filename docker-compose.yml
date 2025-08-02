@@ -1,31 +1,17 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: login-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: login_app
-      MYSQL_ROOT_PASSWORD: rootpassword
-
-    ports:
-    - "3307:3306"
-
-    volumes:
-    - mysql_data:/var/lib/mysql
-
   backend:
     build: ./backend
     container_name: login-backend
     depends_on:
-      - mysql
+      - frontend
     ports:
       - 5000:5000
 
     environment:
-      DB_HOST: mysql
+      DB_HOST: host.docker.internal
       DB_USER: root
       DB_NAME: login_app
-      DB_PASSWORD: rootpassword
+      DB_PASSWORD:
 
   frontend:
     build: ./frontend
@@ -34,6 +20,3 @@ services:
       - "8080:80"
     depends_on:
       - backend
-
-volumes:
-  mysql_data:
